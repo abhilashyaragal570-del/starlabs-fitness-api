@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StarLabs Fitness Studio</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--ink:#1c2333;--mute:#6b7488;--brand:#6c4cf1;--brand2:#2bb7da;--ok:#12a36b;--bad:#d64545;--line:#e4e8f1}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(120deg,var(--brand),var(--brand2));color:#fff;padding:18px 20px}
+.bar{max-width:1000px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{font-size:1.3rem;margin:0}
+.sub{opacity:.85;font-size:.85rem}
+main{max-width:1000px;margin:24px auto;padding:0 16px 60px}
+nav{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+nav button{border:1px solid var(--line);background:var(--card);padding:9px 16px;border-radius:999px;cursor:pointer;font-size:.95rem;color:var(--ink)}
+nav button.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+button.btn{background:var(--brand);color:#fff;border:0;padding:10px 16px;border-radius:10px;cursor:pointer;font-size:.95rem;font-weight:600}
+button.btn:disabled{background:#b9bfd0;cursor:not-allowed}
+button.ghost{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.5);padding:8px 14px;border-radius:10px;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 2px 8px rgba(30,40,80,.05)}
+.card h3{margin:0 0 4px;font-size:1.1rem}
+.mute{color:var(--mute);font-size:.9rem;margin:2px 0}
+.row{display:flex;justify-content:space-between;align-items:center;margin-top:14px;gap:8px}
+.badge{font-size:.8rem;padding:4px 10px;border-radius:999px;background:#e6f7f0;color:var(--ok);font-weight:600}
+.badge.low{background:#fff1e0;color:#c26a00}.badge.full{background:#fde8e8;color:var(--bad)}
+label{display:block;font-size:.85rem;color:var(--mute);margin:12px 0 4px}
+input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:1rem;background:#fff;color:var(--ink)}
+.form{max-width:460px}
+dialog{border:0;border-radius:16px;padding:24px;width:min(400px,92vw);box-shadow:0 10px 40px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(20,25,50,.45)}
+dialog h2{margin:0 0 4px}
+.link{color:var(--brand);cursor:pointer;font-size:.9rem;background:none;border:0;padding:0}
+.empty{color:var(--mute);text-align:center;padding:40px 0}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(80px);background:var(--ok);color:#fff;padding:12px 20px;border-radius:12px;opacity:0;transition:.25s;max-width:90vw;z-index:10}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1}#toast.bad{background:var(--bad)}
+.hide{display:none}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <div><h1>StarLabs Fitness Studio</h1><div class="sub">Browse classes and book your slot &middot; times in IST</div></div>
+  <div id="who"></div>
+</div></header>
+<main>
+  <nav>
+    <button data-v="classes" class="on">Upcoming classes</button>
+    <button data-v="bookings">My bookings</button>
+    <button data-v="add">Add a class</button>
+  </nav>
+
+  <section id="classes"><div class="grid" id="classGrid"></div></section>
+  <section id="bookings" class="hide"><div class="grid" id="bookGrid"></div></section>
+  <section id="add" class="hide"><div class="card form">
+    <h3>Create a class</h3>
+    <form id="addForm">
+      <label>Class name</label><input id="cName" required maxlength="100" placeholder="Yoga Flow">
+      <label>Instructor</label><input id="cInst" required maxlength="100" placeholder="John Doe">
+      <label>Date and time (IST)</label><input id="cWhen" type="datetime-local" required>
+      <label>Available slots</label><input id="cSlots" type="number" min="1" max="1000" value="20" required>
+      <div class="row"><button class="btn" type="submit">Create class</button></div>
+    </form>
+  </div></section>
+</main>
+
+<dialog id="authDlg">
+  <h2 id="authTitle">Log in</h2><div class="mute" id="authSub">Welcome back.</div>
+  <form id="authForm">
+    <div id="nameWrap" class="hide"><label>Name</label><input id="aName" maxlength="100"></div>
+    <label>Email</label><input id="aEmail" type="email" required>
+    <label>Password (min 8 characters)</label><input id="aPass" type="password" required minlength="8" maxlength="72">
+    <div class="row"><button class="btn" type="submit">Continue</button><button type="button" class="link" id="authSwap">Need an account? Sign up</button></div>
+  </form>
+</dialog>
+
+<dialog id="bookDlg">
+  <h2>Book class</h2><div class="mute" id="bookInfo"></div>
+  <form id="bookForm">
+    <label>Client name</label><input id="bName" required maxlength="100">
+    <label>Client email</label><input id="bEmail" type="email" required>
+    <div class="row"><button class="btn" type="submit">Confirm booking</button><button type="button" class="link" id="bookCancel">Cancel</button></div>
+  </form>
+</dialog>
+<div id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = d => new Date(d).toLocaleString('en-IN', {timeZone:'Asia/Kolkata', dateStyle:'medium', timeStyle:'short'}) + ' IST';
+let token = localStorage.getItem('token') || '';
+let myEmail = localStorage.getItem('email') || '';
+let signup = false, bookingClass = null, view = 'classes';
+
+function toast(msg, bad) {
+  const t = $('#toast'); t.textContent = msg; t.className = 'show' + (bad ? ' bad' : '');
+  clearTimeout(toast.t); toast.t = setTimeout(() => t.className = '', 3500);
+}
+
+async function api(path, method = 'GET', body) {
+  const h = {};
+  if (body) h['Content-Type'] = 'application/json';
+  if (token) h['Authorization'] = 'Bearer ' + token;
+  const r = await fetch(path, {method, headers: h, body: body ? JSON.stringify(body) : undefined});
+  let data = null;
+  try { data = await r.json(); } catch (e) {}
+  if (!r.ok) {
+    if (r.status === 401 && token && path !== '/login') logout(true);
+    let d = data && data.detail;
+    if (Array.isArray(d)) d = d.map(x => (x.loc || []).slice(1).join('.') + ': ' + x.msg).join('; ');
+    throw new Error(d || 'Error ' + r.status);
+  }
+  return data;
+}
+
+function renderWho() {
+  $('#who').innerHTML = token
+    ? '<span class="sub">' + esc(myEmail) + '</span> <button class="ghost" id="outBtn">Log out</button>'
+    : '<button class="ghost" id="inBtn">Log in / Sign up</button>';
+  if (token) $('#outBtn').onclick = () => logout(false);
+  else $('#inBtn').onclick = () => openAuth(false);
+}
+
+function logout(expired) {
+  token = ''; myEmail = '';
+  localStorage.removeItem('token'); localStorage.removeItem('email');
+  renderWho(); if (view !== 'classes') show('classes');
+  toast(expired ? 'Session expired. Please log in again.' : 'Logged out.', expired);
+}
+
+function openAuth(isSignup) {
+  signup = isSignup;
+  $('#authTitle').textContent = signup ? 'Create account' : 'Log in';
+  $('#authSub').textContent = signup ? 'Join the studio.' : 'Welcome back.';
+  $('#nameWrap').classList.toggle('hide', !signup);
+  $('#aName').required = signup;
+  $('#authSwap').textContent = signup ? 'Have an account? Log in' : 'Need an account? Sign up';
+  if (!$('#authDlg').open) $('#authDlg').showModal();
+}
+$('#authSwap').onclick = () => openAuth(!signup);
+
+$('#authForm').onsubmit = async e => {
+  e.preventDefault();
+  const email = $('#aEmail').value.trim(), password = $('#aPass').value;
+  try {
+    if (signup) await api('/signup', 'POST', {name: $('#aName').value, email, password});
+    const t = await api('/login', 'POST', {email, password});
+    token = t.access_token; myEmail = email.toLowerCase();
+    localStorage.setItem('token', token); localStorage.setItem('email', myEmail);
+    $('#authDlg').close(); $('#authForm').reset();
+    renderWho(); toast('Welcome!'); load();
+  } catch (err) { toast(err.message, true); }
+};
+
+function show(v) {
+  if ((v === 'bookings' || v === 'add') && !token) { openAuth(false); toast('Please log in first.', true); return; }
+  view = v;
+  document.querySelectorAll('main section').forEach(s => s.classList.toggle('hide', s.id !== v));
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  load();
+}
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => show(b.dataset.v));
+
+async function load() {
+  try {
+    if (view === 'classes') {
+      const list = await api('/classes');
+      $('#classGrid').innerHTML = list.length ? list.map(c => {
+        const full = c.availableSlots === 0, low = c.availableSlots <= 3;
+        return '<div class="card"><h3>' + esc(c.name) + '</h3>' +
+          '<p class="mute">with ' + esc(c.instructor) + '</p><p class="mute">' + esc(fmt(c.dateTime)) + '</p>' +
+          '<div class="row"><span class="badge ' + (full ? 'full' : low ? 'low' : '') + '">' +
+          (full ? 'Full' : c.availableSlots + ' slots left') + '</span>' +
+          '<button class="btn" data-id="' + c.id + '" data-n="' + esc(c.name) + '"' + (full ? ' disabled' : '') + '>Book</button></div></div>';
+      }).join('') : '<div class="empty">No upcoming classes yet.</div>';
+      document.querySelectorAll('#classGrid button[data-id]').forEach(b => b.onclick = () => openBook(b.dataset.id, b.dataset.n));
+    } else if (view === 'bookings') {
+      const list = await api('/bookings');
+      $('#bookGrid').innerHTML = list.length ? list.map(b =>
+        '<div class="card"><h3>' + esc(b.class_name) + '</h3><p class="mute">with ' + esc(b.instructor) + '</p>' +
+        '<p class="mute">' + esc(fmt(b.dateTime)) + '</p><p class="mute">Booked for ' + esc(b.client_name) +
+        ' (' + esc(b.client_email) + ')</p></div>').join('') : '<div class="empty">You have no bookings yet.</div>';
+    }
+  } catch (err) { toast(err.message, true); }
+}
+
+function openBook(id, name) {
+  if (!token) { openAuth(false); toast('Please log in to book.', true); return; }
+  bookingClass = id; $('#bookInfo').textContent = name;
+  $('#bEmail').value = myEmail; $('#bookDlg').showModal();
+}
+$('#bookCancel').onclick = () => $('#bookDlg').close();
+$('#bookForm').onsubmit = async e => {
+  e.preventDefault();
+  try {
+    await api('/book', 'POST', {class_id: Number(bookingClass), client_name: $('#bName').value, client_email: $('#bEmail').value});
+    $('#bookDlg').close(); $('#bookForm').reset(); toast('Booked! See "My bookings".'); load();
+  } catch (err) { toast(err.message, true); }
+};
+
+$('#addForm').onsubmit = async e => {
+  e.preventDefault();
+  try {
+    await api('/classes', 'POST', {name: $('#cName').value, instructor: $('#cInst').value,
+      dateTime: $('#cWhen').value + ':00', availableSlots: Number($('#cSlots').value)});
+    $('#addForm').reset(); $('#cSlots').value = 20; toast('Class created.'); show('classes');
+  } catch (err) { toast(err.message, true); }
+};
+
+renderWho(); load();
+</script>
+</body>
+</html>
