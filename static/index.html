@@ -187,7 +187,58 @@ button.btn{min-height:44px;padding:12px 20px}
 }/* font v1 */
 body,button,input{font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 h1,h2,h3,h4{letter-spacing:-.02em}
-.hero h1{letter-spacing:-.035em}</style>
+.hero h1{letter-spacing:-.035em}/* figures v1 */
+.fig{position:absolute;pointer-events:none;z-index:0;opacity:.22;fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.fig *{transform-box:view-box}
+.f1{left:44%;bottom:70px;height:190px}
+.f2{right:30%;bottom:66px;height:120px}
+.f3{left:2%;bottom:66px;height:170px}
+.armL{transform-origin:50px 42px;animation:armL 6s ease-in-out infinite}
+.armR{transform-origin:50px 42px;animation:armR 6s ease-in-out infinite}
+@keyframes armL{0%,100%{transform:rotate(14deg)}50%{transform:rotate(168deg)}}
+@keyframes armR{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(-168deg)}}
+.aura{stroke-width:2;transform-origin:50px 62px;animation:aura 5s ease-in-out infinite}
+@keyframes aura{0%,100%{transform:scale(.9);opacity:.4}50%{transform:scale(1.08);opacity:1}}
+.jump{animation:jump 1.6s ease-in-out infinite}
+.f3 .armL,.f3 .armR{animation-duration:1.6s}
+.legL{transform-origin:50px 85px;animation:legL 1.6s ease-in-out infinite}
+.legR{transform-origin:50px 85px;animation:legR 1.6s ease-in-out infinite}
+@keyframes jump{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes legL{0%,100%{transform:rotate(4deg)}50%{transform:rotate(24deg)}}
+@keyframes legR{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(-24deg)}}
+@media (max-width:760px){.f2,.f3{display:none}.f1{left:auto;right:4%;height:150px}}
+@media (prefers-reduced-motion:reduce){.fig *{animation:none!important}}/* pro v1 */
+:root{--brand:#0f8f86;--brand2:#5b8def}
+.hero{background:linear-gradient(120deg,#0b3b3c,#0f766e,#2f5f9e,#0f766e);background-size:300% 300%}
+.hero button.btn{color:#0b4d49}
+button.btn{box-shadow:0 4px 12px rgba(15,143,134,.3)}
+button.btn:hover:not(:disabled){box-shadow:0 8px 20px rgba(15,143,134,.42)}
+.logo i,.tabs button.on{box-shadow:0 4px 12px rgba(15,143,134,.4)}
+input:focus{box-shadow:0 0 0 4px rgba(15,143,134,.2)}
+.card{border-radius:20px}
+.eyebrow{letter-spacing:1.4px;text-transform:uppercase;font-size:.74rem}
+.pro{position:absolute;right:2%;bottom:80px;height:360px;z-index:0;pointer-events:none;opacity:.55}
+.pro *{transform-box:fill-box}
+.pro .halo{fill:none;stroke:rgba(255,255,255,.4);stroke-width:1.5;transform-origin:center;animation:halo 6s ease-in-out infinite}
+.pro .h2{animation-delay:-3s}
+.pro .shadow{fill:rgba(0,0,0,.28)}
+.pro .limbs{fill:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round}
+.pro .breathe{transform-origin:center bottom;animation:breathe 5s ease-in-out infinite}
+@keyframes halo{0%,100%{transform:scale(.94);opacity:.35}50%{transform:scale(1.06);opacity:1}}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.018,1.03)}}
+@media (max-width:860px){.pro{height:230px;right:-10px;bottom:70px;opacity:.3}}
+@media (prefers-reduced-motion:reduce){.pro *{animation:none!important}}/* poses v1 */
+.pro{width:270px}
+.pro svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.pro .pose{opacity:0;animation:posefade 24s ease-in-out infinite}
+.pro .p2{animation-delay:6s}.pro .p3{animation-delay:12s}.pro .p4{animation-delay:18s}
+@keyframes posefade{0%{opacity:0;transform:translateY(10px)}4%,22%{opacity:1;transform:none}26%,100%{opacity:0;transform:translateY(-6px)}}
+@media (max-width:860px){.pro{width:173px}}
+@media (prefers-reduced-motion:reduce){.pro .pose{opacity:0;animation:none}.pro .p1{opacity:1}}
+.card.hasp .ctop{padding-right:42px}
+.pose-ico{position:absolute;top:16px;right:14px;width:30px;height:40px;color:var(--brand);opacity:.6;animation:picobreathe 5s ease-in-out infinite;pointer-events:none}
+@keyframes picobreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.hero.hasphoto::before{content:"";position:absolute;inset:0;background:var(--heroimg) center/cover no-repeat;opacity:.3;pointer-events:none}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"></head>
 <body>
 <canvas id="fx"></canvas>
@@ -199,12 +250,17 @@ h1,h2,h3,h4{letter-spacing:-.02em}
 </div></header>
 
 <section class="hero" id="top">
-  <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span>
-  <div class="wrap heroin">
+  <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span><div class="pro" aria-hidden="true">
+<svg class="bg" viewBox="0 0 240 320"><defs><linearGradient id="pg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="320"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#bff3ea"/></linearGradient></defs><circle class="halo h1" cx="120" cy="160" r="112"/><circle class="halo h2" cx="120" cy="160" r="82"/><ellipse class="shadow" cx="120" cy="298" rx="60" ry="7"/></svg>
+<svg class="pose p1" viewBox="0 0 240 320"><g transform="translate(20,0)"><g class="breathe"><circle cx="100" cy="52" r="12" fill="url(#pg)"/><g class="limbs" stroke="url(#pg)"><path d="M100 68 L100 150"/><path d="M100 150 L100 280"/><path d="M100 150 L142 190 L103 224"/><path d="M100 82 Q66 66 88 30 L100 14"/><path d="M100 82 Q134 66 112 30 L100 14"/></g></g></g></svg>
+<svg class="pose p2" viewBox="0 0 240 320"><g class="breathe"><circle cx="120" cy="74" r="12" fill="url(#pg)"/><g class="limbs" stroke="url(#pg)"><path d="M120 92 L120 170"/><path d="M36 102 L204 102"/><path d="M120 170 L62 212 L62 290"/><path d="M120 170 L204 290"/></g></g></svg>
+<svg class="pose p3" viewBox="0 0 240 320"><g class="breathe"><circle cx="120" cy="150" r="12" fill="url(#pg)"/><g class="limbs" stroke="url(#pg)"><path d="M120 166 L120 248"/><path d="M120 184 Q82 218 64 270"/><path d="M120 184 Q158 218 176 270"/><path d="M52 274 Q120 230 188 274"/><path d="M66 288 Q120 258 174 288"/></g></g></svg>
+<svg class="pose p4" viewBox="0 0 240 320"><g class="breathe"><circle cx="98" cy="232" r="11" fill="url(#pg)"/><g class="limbs" stroke="url(#pg)"><path d="M46 290 L124 120 L200 290"/><path d="M30 292 L60 292"/><path d="M186 292 L214 292"/></g></g></svg>
+</div><div class="wrap heroin">
     <div>
-      <span class="eyebrow">GROUP FITNESS CLASSES</span>
-      <h1>Find your strength.<br><span>Book your spot.</span></h1>
-      <p class="lead">Yoga, HIIT, Zumba and more. See live availability, book in seconds, and add the class to your calendar.</p>
+      <span class="eyebrow">Yoga &amp; athlete performance</span>
+      <h1>Breathe. Move.<br><span>Perform better.</span></h1>
+      <p class="lead">Yoga, mobility and strength classes for athletes and everyday movers. See live availability, book in seconds and add it to your calendar.</p>
       <div class="cta">
         <button class="btn big" id="ctaBrowse">Browse classes</button>
         <button class="btn big alt" id="ctaJoin">Create account</button>
@@ -252,7 +308,15 @@ h1,h2,h3,h4{letter-spacing:-.02em}
 </main>
 
 <div class="wrap">
-  <section class="sec" id="how">
+  <section class="sec" id="train">
+<h2 class="rv">Train the whole athlete</h2><p class="sub rv">Classes built around how you move, breathe and recover.</p>
+<div class="why">
+<div class="feat rv"><div class="fi">&#129496;</div><h3>Mobility</h3><p>Open up hips, shoulders and spine so you move better in every sport.</p></div>
+<div class="feat rv"><div class="fi">&#127947;</div><h3>Strength</h3><p>Build stable, balanced strength that supports your training.</p></div>
+<div class="feat rv"><div class="fi">&#127788;</div><h3>Breath</h3><p>Slow, controlled breathing to calm the mind and sharpen focus.</p></div>
+<div class="feat rv"><div class="fi">&#128167;</div><h3>Recovery</h3><p>Gentle sessions that help your body reset between hard days.</p></div>
+</div></section>
+<section class="sec" id="how">
     <h2 class="rv">How it works</h2><p class="sub rv">Three quick steps from sofa to studio.</p>
     <div class="steps">
       <div class="step rv"><div class="num">1</div><h3>Create your account</h3><p>Sign up with your email. It takes under a minute.</p></div>
@@ -331,15 +395,15 @@ $('#themeBtn').onclick = () => {
 
 /* ---- class look ---- */
 const THEMES = [
-  {k:/yoga|stretch|flow/i, i:'\u{1F9D8}', g:'linear-gradient(135deg,#8b5cf6,#ec4899)'},
+  {k:/yoga|stretch|flow/i, i:'\u{1F9D8}', g:'linear-gradient(135deg,#0f8f86,#5eb8a8)'},
   {k:/hiit|cardio|burn|boot/i, i:'\u{1F525}', g:'linear-gradient(135deg,#f97316,#ef4444)'},
   {k:/zumba|dance|party/i, i:'\u{1F483}', g:'linear-gradient(135deg,#ec4899,#f59e0b)'},
   {k:/strength|weight|power|lift/i, i:'\u{1F3CB}', g:'linear-gradient(135deg,#0ea5e9,#6366f1)'},
   {k:/pilates|core|barre/i, i:'\u{1F938}', g:'linear-gradient(135deg,#10b981,#06b6d4)'}
 ];
-const DEFAULT_THEME = {i:'\u2B50', g:'linear-gradient(135deg,#6c4cf1,#2bb7da)'};
+const DEFAULT_THEME = {i:'\u2B50', g:'linear-gradient(135deg,#0f8f86,#5b8def)'};
 const themeFor = name => THEMES.find(t => t.k.test(name)) || DEFAULT_THEME;
-const GRADS = ['linear-gradient(135deg,#8b5cf6,#ec4899)','linear-gradient(135deg,#f97316,#ef4444)','linear-gradient(135deg,#0ea5e9,#6366f1)','linear-gradient(135deg,#10b981,#06b6d4)','linear-gradient(135deg,#ec4899,#f59e0b)'];
+const GRADS = ['linear-gradient(135deg,#0f8f86,#5eb8a8)','linear-gradient(135deg,#f97316,#ef4444)','linear-gradient(135deg,#0ea5e9,#6366f1)','linear-gradient(135deg,#10b981,#06b6d4)','linear-gradient(135deg,#ec4899,#f59e0b)'];
 const gradFor = s => GRADS[[...s].reduce((a, c) => a + c.charCodeAt(0), 0) % GRADS.length];
 
 function toast(msg, bad) {
@@ -641,5 +705,62 @@ $('#addForm').onsubmit = async e => {
 
 renderWho(); reveal(); load();
 </script>
-</body>
+<script>
+// poses v1 js
+(function () {
+  const YOGA = /yoga|stretch|flow/i;
+  const open = '<svg class="pose-ico" viewBox="0 0 60 80" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+  const ICONS = [
+    open + '<circle cx="30" cy="18" r="5"/><path d="M30 24V50M30 50V76M30 50L44 60L31 68M30 30Q10 22 30 4M30 30Q50 22 30 4"/></svg>',
+    open + '<circle cx="30" cy="16" r="5"/><path d="M30 22V46M4 28H56M30 46L14 58V76M30 46L52 76"/></svg>',
+    open + '<circle cx="30" cy="28" r="5"/><path d="M30 34V58M30 40Q18 52 14 66M30 40Q42 52 46 66M10 68Q30 54 50 68M14 76Q30 64 46 76"/></svg>',
+    open + '<circle cx="23" cy="58" r="4"/><path d="M8 74L30 20L52 74"/></svg>'
+  ];
+  function decorate(sel) {
+    const root = document.querySelector(sel); if (!root) return;
+    root.querySelectorAll('.card').forEach(card => {
+      const h = card.querySelector('h3');
+      if (!h || card.querySelector('.pose-ico') || !YOGA.test(h.textContent)) return;
+      const tc = card.querySelector('.timechip');
+      const key = h.textContent + (tc ? tc.textContent : '');
+      const n = [...key].reduce((a, c) => a + c.charCodeAt(0), 0) % ICONS.length;
+      card.classList.add('hasp');
+      card.insertAdjacentHTML('beforeend', ICONS[n]);
+    });
+  }
+
+  const seen = {};
+  function probe(url, yes) { return; /* photos off */
+    if (url in seen) { if (seen[url]) yes(); return; }
+    const im = new Image();
+    im.onload = () => { seen[url] = true; yes(); };
+    im.onerror = () => { seen[url] = false; };
+    im.src = url;
+  }
+  const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  function photos() {
+    document.querySelectorAll('#teamGrid .coach').forEach(c => {
+      const h = c.querySelector('h3'), av = c.querySelector('.av');
+      if (!h || !av) return;
+      const url = '/static/photos/' + slug(h.textContent) + '.jpg';
+      probe(url, () => {
+        av.style.backgroundImage = 'url("' + url + '")';
+        av.style.backgroundSize = 'cover';
+        av.style.backgroundPosition = 'center';
+        av.textContent = '';
+      });
+    });
+  }
+
+  const rc = renderClasses; renderClasses = function () { rc(); decorate('#classGrid'); };
+  const rb = renderBookings; renderBookings = function () { rb(); decorate('#bookGrid'); };
+  const rt = renderTeam; renderTeam = function () { rt(); photos(); };
+
+  probe('/static/photos/hero.jpg', () => {
+    const h = document.querySelector('.hero');
+    h.style.setProperty('--heroimg', 'url("/static/photos/hero.jpg")');
+    h.classList.add('hasphoto');
+  });
+})();
+</script></body>
 </html>
