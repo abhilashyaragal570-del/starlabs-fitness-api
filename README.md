@@ -44,7 +44,7 @@ tests/             pytest suite
 ### 1. Clone and enter the project
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/starlabs-fitness-api.git
+git clone https://github.com/abhilashyaragal570-del/starlabs-fitness-api.git
 cd starlabs-fitness-api
 ```
 
